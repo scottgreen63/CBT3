@@ -1,0 +1,188 @@
+﻿@page "/courseplayer/{traineeId}/{courseId}"
+
+@using CBT3_Application.Interfaces
+@using CBT3_Application.Messaging.Commands
+@using CBT3_Domain.Common
+@using CBT3_Domain.Enums
+@using CBT3_Domain.Entities
+@using CBT3_Domain.Events
+@using CBT3_Domain.Events.DomainEvents
+@using CBT3_Domain.Events.SystemEvents
+@using CBT3_Domain.Interfaces
+
+@using CBT3_Application.Services
+@using CBT3_UI
+@using CBT_UI.Components.Pages.Shared
+@using Radzen
+@using Blazored.Video
+@using Blazored.Video.Support
+
+@rendermode InteractiveServer
+
+@inject DialogService _dialogService
+@inject NavigationManager _navManager
+@inject IMediator _mediator
+@inject IMessenger _messenger
+@inject CourseMachine _courseMachine;
+@inject TrainingService _trainingService;
+@inject CBT3_App _cbtApp
+
+<style>
+
+    body {
+        background-image: url('/images/background_opening.jpg'); /* Specify the path to your image */
+        background-size: cover; /* Adjusts the size of the background image to cover the entire body */
+        background-repeat: no-repeat; /* Prevents the background image from repeating */
+        background-attachment: fixed; /* Fixes the background image when scrolling */
+        */
+    }
+
+    .button-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Adjust the gap between buttons as needed */
+        position: fixed;
+        justify-content: center;
+    }
+
+
+
+    .button-style {
+        width: 320px; /* Adjusted width for a larger button */
+        height: 120px; /* Adjusted height for a taller button */
+        font-size: 18px; /* Adjust font size for larger text */
+        background-color: #006AA9 !important;
+        color: #ffffff !important;
+    }
+
+
+
+    .custom-radzen-button {
+        background-color: #006AA9 !important;
+        width: 220px;
+        color: #ffffff !important;
+        height: 60px;
+        font-size: 18px;
+    }
+
+    .button-container {
+        display: inline-block;
+        text-align: center;
+        position: fixed;
+        top: 35%;
+        left: 50%;
+        width: 950px;
+        transform: translate(-50%, -50%);
+    }
+
+    .video-container {
+        background-color: white;
+        font-size: 18px;
+        display: inline-block;
+        text-align: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 1200px;
+        transform: translate(-50%, -50%);
+    }
+
+    .heading-container {
+        opacity:.95;
+        background-color: transparent; /* Sets the background color to white */
+        font-size: 60px; /* Sets the font size to 60 pixels */
+        /* text-transform: uppercase; */ /* Uncomment this line if you want to transform text to uppercase */
+        display: inline-block; /* Displays the container as an inline block */
+        text-align: center; /* Aligns the text content to the center */
+        position: fixed; /* Sets the position to fixed */
+        top: 40%; /* Positions the container 50% from the top of the viewport */
+        left: 50%; /* Positions the container 50% from the left of the viewport */
+        width: 1550px; /* Sets the width of the container to 1550 pixels */
+        /* height: 200px; */ /* Uncomment this line if you want to set a specific height for the container */
+        transform: translate(-50%, -50%); /* Translates the container -50% of its own width and height */
+    }
+
+    .button-container RadzenButton {
+        display: inline-block;
+        margin-right: 10px; /* Optional: Add some space between the buttons */
+        top: 50%;
+        left: 50%;
+    }
+
+    .center-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .course-container {
+        display: inline-block;
+        /* display: inline-block; */
+        height: 200px;
+        width: 500px;
+        background-color: black;
+        color: yellow;
+        max-height: 500px; /* Adjust the max height as needed */
+        overflow-y: auto;
+        padding: 10px;
+        /* left: 50%; */
+    }
+
+
+
+   
+    .radzen-dialog {
+        /* background-color: rgba(28, 62, 98, 0.5); */
+        background-color: rgba(28, 62, 98, 0.5);
+        /*background-color: white;*/
+        padding: 20px; /* Add padding as needed */
+    }
+
+    .admin-dialog {
+        /* background-color: rgba(28, 62, 98, 0.5); */
+        background-color: black;
+        /*background-color: white;*/
+        padding: 20px; /* Add padding as needed */
+    }
+   
+</style>
+
+
+
+    <div class="button-container">
+    <RadzenButton class="btn button custom-radzen-button" Style="@_startStyle" Click="CourseMachineStart" Text="START" />
+</div>
+   
+
+
+
+<div class="heading-container" style="@_courseMessageStyle">
+    <br />
+    <span>@_courseMessage</span>
+    <br />
+    <br />
+    <div style="@_continueButton">
+        <RadzenButton class="btn button custom-radzen-button" Style="" Click="ContinueClick"  Text="CONTINUE" /> 
+    </div>
+    <div style="@_coursecompleted">
+        <RadzenButton class="btn button custom-radzen-button" Style="" Click="ContinueClick" Text="EXIT SYSTEM" />
+        <RadzenButton class="btn button custom-radzen-button" Style="" Click="ContinueClick" Text="NEXT COURSE SELECTION" />
+    </div>
+    <br />
+
+    
+</div>
+
+
+
+
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+
+
+    
+}
+

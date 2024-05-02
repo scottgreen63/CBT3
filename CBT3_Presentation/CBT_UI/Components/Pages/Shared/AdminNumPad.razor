@@ -1,0 +1,124 @@
+﻿@page "/adminpasscode"
+@using CBT3_UI
+@using Radzen.Blazor;
+@using Radzen;
+@inject CBT3_Application.Services.SystemService _systemSvc
+@inject DialogService _dialogService
+<style>
+
+    .submit {
+        width: 110px; /* Adjust the width based on your requirement */
+        height: 75px; /* Adjust the height based on your requirement */
+        margin: 10px; /* Adjust the margin based on your requirement */
+        font-size: 18px;
+        color: white;
+    }
+    .keybutton {
+        width: 75px; /* Adjust the width based on your requirement */
+        height: 75px; /* Adjust the height based on your requirement */
+        margin: 10px; /* Adjust the margin based on your requirement */
+        font-size: 18px;
+        background-color: #006AA9 !important;
+        color: #fff !important;
+    }
+
+    .keyboardRow {
+        text-align: center
+    }
+
+    .key {
+        display: inline-block;
+        border: 1px solid red;
+        padding: 10px;
+        margin-bottom: 5px;
+    }
+
+    .backspace {
+        width: 110px; /* Adjust the width based on your requirement */
+        height: 75px; /* Adjust the height based on your requirement */
+        margin: 10px; /* Adjust the margin based on your requirement */
+        font-size: 18px;
+        background-color: #006AA9 !important;
+    }
+</style>
+                                <div class="container">
+                                    <div class="row justify-content-md-center">
+                                                <div class="col-md-auto">
+                                                    @* <RadzenLabel Text="Admin Passcode" Component="adminpasscode" Style="font-size: 18px;font-weight:600;color:white" /> *@
+                                                    <RadzenPassword Placeholder="Enter Passcode..." AutoComplete="false" Name="adminpasscode" Style="text-align:center;font-size: 18px;font-weight:600" @bind-Value="@AdminPassCode" @ref="adminpasscodeInput" />
+                                                    <RadzenRequiredValidator Component="adminpasscode" Text="Passcode is required" Popup=@false Style="font-weight:600" />
+                                                    
+                                                </div>
+                                   </div>
+                                </div>
+                                        <br />
+                                <div class="keyboardRow">
+                                    <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("1"))">1</RadzenButton>
+                                    <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("2"))">2</RadzenButton>
+                                    <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("3"))">3</RadzenButton>
+                                </div>
+                                
+                                <div class="keyboardRow">
+                                            <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("4"))">4</RadzenButton>
+                                            <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("5"))">5</RadzenButton>
+                                            <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("6"))">6</RadzenButton>
+                                </div>
+
+                                <div class="keyboardRow">
+                                    <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("7"))">7</RadzenButton>
+                                    <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("8"))">8</RadzenButton>
+                                    <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("9"))">9</RadzenButton>
+                                </div>
+
+                                <div class="keyboardRow">
+                                            <RadzenButton class="btn backspace btn-sm btn-primary" Click="@(()=>BackspacePressed())">BKSPC</RadzenButton>
+                                            <RadzenButton class="btn keybutton btn-primary" Click="@(()=> NumKeyPressed("0"))">0</RadzenButton>
+                                            <RadzenButton class="btn submit btn-sm btn-primary" Text="SUBMIT" ButtonStyle="ButtonStyle.Success" Click="@(()=>CheckAdminPasscode() )" />
+                                </div>
+                            
+
+@code {
+    RadzenPassword adminpasscodeInput;
+    private string pressedNumKeys = "";
+    private string AdminPassCode = "";
+   
+    private void BackspacePressed()
+    {
+        if (true)
+        {
+            if (AdminPassCode.Length > 0)
+            {
+                pressedNumKeys = pressedNumKeys.Substring(0, pressedNumKeys.Length - 1);
+                AdminPassCode = AdminPassCode.Substring(0, AdminPassCode.Length - 1);
+            }
+        }
+
+    }
+    private void NumKeyPressed(string key)
+    {
+
+        if (true)
+        {
+            if (pressedNumKeys.Length < 4)
+            {
+                pressedNumKeys += key;
+            }
+        }
+
+
+        if (true)
+        {
+            AdminPassCode = pressedNumKeys;
+        }
+
+
+    }
+
+
+    private void CheckAdminPasscode()
+    {
+        bool isCorrect =  Convert.ToInt32(AdminPassCode) == _systemSvc.GetAdminPasscode().Result.Value;
+
+        _dialogService.Close(isCorrect);
+    }
+}

@@ -1,0 +1,69 @@
+﻿@page "/"
+@inject NavigationManager _navManager
+@using Radzen.Blazor
+@using CBT_UI.Components.Pages.Shared
+@rendermode InteractiveServer
+
+<style>
+    body {
+        background-image: url('/images/background_opening.jpg'); /* Specify the path to your image */
+        background-size: cover; /* Adjusts the size of the background image to cover the entire body */
+        background-repeat: no-repeat; /* Prevents the background image from repeating */
+        background-attachment: fixed; /* Fixes the background image when scrolling */
+    }
+
+    .heading-container {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+        text-align: center
+        
+    }
+    .button-container {
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .cbt-style {
+        width: 320px; /* Adjusted width for a larger button */
+        height: 120px; /* Adjusted height for a taller button */
+        font-size: 18px; /* Adjust font size for larger text */
+        background-color: #006AA9 !important;
+        color: #ffffff !important;
+    }
+</style>
+
+<div class="heading-container">
+    <h3 style="font-size: 45px;">PORTLAND INTERNATIONAL AIRPORT</h3>
+    <h3 style="font-size: 45px;">This interactive training uses a touchscreen.<br> Please touch the Start button to begin.</h3>
+</div>
+
+<div class="button-container">
+    <RadzenButton class="btn cbt-style" Click="NavigateToInstruction" Text="START" />
+    
+</div>
+
+
+@code {
+    [CascadingParameter] public CascadingAppState AppState { get; set; }
+
+    void UpdateToolBarMessage()
+    {
+
+        AppState.SetProperty(this, "Session", "Session Started At "
+                             + DateTime.Now.ToLongTimeString());
+    }
+    private async Task NavigateToInstruction()
+    {
+        UpdateToolBarMessage();
+        //UpdateMessageButtonClicked();
+        _navManager.NavigateTo("/instructionpage");
+
+    }
+    
+    
+}

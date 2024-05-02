@@ -1,0 +1,127 @@
+﻿@using CBT3_Domain.Entities
+@using CBT3_UI
+@inject CBT3_App _cbtApp
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    private string Caller = "";
+
+    public void SetProperty(ComponentBase caller, string PropertyName,object PropertyValue)
+    {
+        try
+        {
+            var prop = this.GetType().GetProperty(PropertyName);
+            if (prop != null)
+            {
+                this.Caller = caller.GetType().Name;
+                prop.SetValue(this, PropertyValue);
+                InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+    
+    public Trainee? Trainee
+    {
+        get => _cbtApp.Trainee; 
+        private set
+        {
+            
+            _cbtApp.Trainee = value;
+            if (Caller == "TraineeCourseToolbar")
+            {
+                // The Toolbar component changed the AppState Message property
+            }
+        }
+    }
+
+    
+    public Course? Course
+    {
+        get => _cbtApp.Course; 
+        private set
+        {
+            //_course = value;
+            _cbtApp.Course = value;
+            if (Caller == "TraineeCourseToolbar")
+            {
+                // The Toolbar component changed the AppState Message property
+            }
+        }
+    }
+    
+    public LessonPage? LessonPage
+    {
+        get => _cbtApp.LessonPage; 
+        private set
+        {
+            _cbtApp.LessonPage = value;
+            if (Caller == "TraineeCourseToolbar")
+            {
+                // The Toolbar component changed the AppState Message property
+            }
+        }
+    }
+    
+    //bool CoursePass
+    public bool CoursePass
+    {
+        get => _cbtApp.CoursePass;
+        private set
+        {
+            //_session = value;
+            _cbtApp.CoursePass = value;
+            if (Caller == "TraineeCourseToolbar")
+            {
+                // The Toolbar component changed the AppState Message property
+            }
+        }
+    }
+    public string Session
+    {
+        get => _cbtApp.Session; 
+        private set
+        {
+            //_session = value;
+            _cbtApp.Session = value;
+            if (Caller == "SessionToolbar")
+            {
+                // The Toolbar component changed the AppState Message property
+            }
+        }
+    }
+
+    private bool enabled = false;
+    public bool Enabled
+    {
+        get => enabled;
+        private set
+        {
+            enabled = value;
+        }
+    }
+
+    // private int counter = 0;
+    // public int Counter
+    // {
+    //     get => counter;
+    //     private set
+    //     {
+    //         counter = value;
+    //         if (Caller == "Counter")
+    //         {
+    //             // The Counter page changed the AppState Counter property
+    //         }
+    //     }
+    // }
+}

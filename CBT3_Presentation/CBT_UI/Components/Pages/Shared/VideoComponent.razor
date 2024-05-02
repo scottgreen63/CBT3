@@ -1,0 +1,94 @@
+﻿@using Radzen
+@using Blazored.Video
+@using Blazored.Video.Support
+@inject DialogService _dialogService
+
+<div style="display: flex; justify-content: center; align-items: center;">
+    <BlazoredVideo @ref="video1"
+        
+        Ended=@(s=>OnEnd(s))
+       
+        VideoEventOptions="options"
+                   class="w-100"
+                   style="width:1200px;height:600px "
+                   autoplay controls="controls">
+        <source src="@filename" type="video/mp4" />
+    </BlazoredVideo>
+    <br />
+    <button class="btn btn-primary" @onclick=@(async ()=>await PlayOrPause(video1))>@PausePlayText1</button>
+    <br />
+</div>
+
+@code {
+    [Parameter]
+    public string FileName { get; set; }
+    private string filename;
+
+    Dictionary<VideoEvents, VideoStateOptions> options = new Dictionary<VideoEvents, VideoStateOptions>();
+    VideoState videoState;
+    string PausePlayText1 = "Pause";
+    string PausePlayText2 = "Pause";
+    BlazoredVideo video1;
+    
+    string id;
+
+    private void OnEnd(VideoState state)
+    {
+        _dialogService.Close(true); 
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            filename = FileName;
+
+            var pausedOption = new VideoStateOptions() { Paused = true };
+            options[VideoEvents.CanPlay] = pausedOption;
+            options[VideoEvents.Ended] = pausedOption;
+            options[VideoEvents.Pause] = pausedOption;
+            options[VideoEvents.Play] = pausedOption;
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            // For example, log the exception or display an error message
+        }
+
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+        }
+    }
+
+    void OnEvent(ref string PausePlayText, VideoState videoState)
+    {
+        if (videoState.Ended)
+        {
+            _dialogService.Close(true);
+        }
+
+        id = videoState.Id;
+        PausePlayText = videoState.Paused switch
+        {
+            true => "Play",
+            _ => "Pause"
+        };
+        StateHasChanged();
+    }
+    async Task PlayOrPause(BlazoredVideo video)
+    {
+        if (await video.GetPausedAsync())
+        {
+            await video.StartPlayback();
+        }
+        else
+        {
+            await video.PausePlayback();
+        }
+    }
+}

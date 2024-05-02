@@ -1,0 +1,11 @@
+﻿<RadzenText Text="TrueFalseComponent" TextStyle="TextStyle.Subtitle2" />
+<RadzenRadioButtonList @bind-Value=@value TValue="bool" class="mb-5" Orientation="Radzen.Orientation.Vertical">
+    <Items>
+        <RadzenRadioButtonListItem Text="True" Value="true"  />
+        <RadzenRadioButtonListItem Text="False" Value="false" />
+    </Items>
+</RadzenRadioButtonList>
+
+@code {
+    bool value = false;
+}

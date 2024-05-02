@@ -1,0 +1,295 @@
+﻿@page "/lessonquizcomponent/{lessonquizId}"
+
+@rendermode InteractiveServer
+
+@using CBT3_Domain.Entities
+@using CBT3_Domain.Enums
+@namespace CBT3_UI.Components.Shared
+<style>
+    body {
+        background-image: url('/background_opening.jpg'); /* Specify the path to your image */
+        background-size: cover; /* Adjusts the size of the background image to cover the entire body */
+        background-repeat: no-repeat; /* Prevents the background image from repeating */
+        background-attachment: fixed; /* Fixes the background image when scrolling */
+    }
+    
+    .app-title {
+        margin: 30px auto;
+        padding: 10px;
+        font-size: 40pt;
+        width: 100%;
+        text-align: center;
+    }
+
+    .quiz {
+        margin: 5px auto; 
+        width: 75%;
+        height:800px;
+        background-color: #f5f6f6;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: -20px 20px 30px rgba(0,0,0,0.3);
+    }
+
+    .quiz-header {
+        text-align: center;
+        font-size:18px;
+    }
+
+    .quiz-body {
+        padding-top: 15px;
+    }
+
+    .quiz-footer {
+        display: flex;
+        justify-content: center;
+    }
+
+    
+
+    .button-style {
+        width: 320px; /* Adjusted width for a larger button */
+        height: 120px; /* Adjusted height for a taller button */
+        font-size: 18px; /* Adjust font size for larger text */
+        background-color: #006AA9 !important;
+        color: #ffffff !important;
+    }
+
+    .custom-radzen-button {
+        background-color: #006AA9 !important;
+        width: 220px;
+        color: #ffffff !important;
+        height: 60px;
+        font-size: 18px;
+    }
+    .checkbox-container {
+        display: flex;
+        align-items: center; 
+        
+    }
+    
+    .checkbox-container label {
+        font-size: 18px;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+        width: 24px;
+        height: 24px;
+    }
+
+    .image-container {
+        max-width: 100px; /* Adjust the maximum width as needed */
+        max-height: 100px; /* Optional: Set maximum height to maintain aspect ratio */
+        border: thick;
+        border-color: black;
+    }
+   
+</style>
+
+
+    <div class="quiz" style="width:1200px">
+        
+        @if (_lessonquiz!=null)
+        {
+            <h4>Score : @Score out of @_lessonquiz.QuestionPools.Count() </h4>
+            
+            
+            if (!IsQuizFailure && CurrentQuestion != null)
+            {
+                   @*  <RadzenRow class="rz-text-align-center rz-border-info-light" Gap="1rem">
+                        <RadzenColumn Size="10" Offset="1" class="rz-background-color-info-lighter rz-color-on-info-lighter rz-p-1">
+                            <div class="quiz-header">
+                                <b>Current Pool @_currentPoolId</b>
+                                <br />
+                                <b>Current @currentQuestion.Id</b>
+                                <br />
+                                <b>Question Type @currentQuestion.QuestionType</b>
+                            </div>
+                        </RadzenColumn>
+                    </RadzenRow> *@
+                
+                
+                    <div class="quiz-header">
+                        
+                        <RadzenRow class="rz-text-align-center" Gap="1rem">
+                            <RadzenColumn Size="10" Offset="1" class="rz-p-3">
+                        <h4>@CurrentQuestion.QuestionText</h4>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <br /><br />
+
+                @if (CurrentQuestion.QuestionType.Equals(QuestionType.TrueFalse))
+                        {
+                        <RadzenRow class="rz-text-align-center" Gap="1rem">
+                            <RadzenColumn Size="8" Offset="2" class="rz-p-5">
+                            @foreach (var answer in CurrentQuestion.Answers)
+                                {
+                                    <RadzenButton Text="@answer.AnswerText" class="btn custom-radzen-button" Click="() => SubmitAnswer(answer)" />
+                                    <br />
+                                    <br />
+                                    <br />
+                                }
+                            </RadzenColumn>
+                        </RadzenRow>
+
+                        }
+
+                @if (CurrentQuestion.QuestionType.Equals(QuestionType.TrueFalseWithImageQuestion))
+                        {
+                    <RadzenImage Path="@ImagePath(CurrentQuestion.QuestionImage)"></RadzenImage>
+                            <br />
+                            <br />
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="8" Offset="2" class="rz-p-5">
+                            @foreach (var answer in CurrentQuestion.Answers)
+                                    {
+                                        <RadzenButton Text="@answer.AnswerText" class="btn custom-radzen-button" Click="() => SubmitAnswer(answer)" />
+                                        <br />
+                                        <br />
+                                        <br />
+                                    }
+                                </RadzenColumn>
+                            </RadzenRow>
+                        }
+                        
+                        @if (CurrentQuestion.QuestionType.Equals(QuestionType.MultipleChoice))
+                        {
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="7" Offset="4" class="rz-p-1">
+                            @foreach (var answer in CurrentQuestion.Answers)
+                                    {
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" id="@answer.Id" @bind="answer.IsSelected" />
+                                            <RadzenLabel Text="@answer.AnswerText" Component="@answer.Id.Value" Style="font-size: 18px;margin-left: 8px; vertical-align: middle;" />
+                                        </div>
+                                        <br />
+                                    }
+                                    <br />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="6" Offset="3" class="rz-p-1">
+                            <RadzenButton Text="SUBMIT" class="btn custom-radzen-button" Click="() => SubmitAnswers(CurrentQuestion.Answers)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        }
+
+                @if (CurrentQuestion.QuestionType.Equals(QuestionType.MultipleChoiceWithImageQuestion))
+                        {
+                    <RadzenImage Path="@ImagePath(CurrentQuestion.QuestionImage)"></RadzenImage>
+                            <br />
+                            <br />
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="7" Offset="4" class="rz-p-1">
+                            @foreach (var answer in CurrentQuestion.Answers)
+                                    {
+                                        <div class="checkbox-container">
+                                            <input type="checkbox" id="@answer.Id" @bind="answer.IsSelected" />
+                                            <label for="@answer.Id">&nbsp;&nbsp;<b>@answer.AnswerText</b></label>
+                                        </div>
+                                        <br />
+                                    }
+                                    <br />
+                                </RadzenColumn>
+                            </RadzenRow>
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="6" Offset="3" class="rz-p-1">
+                            <RadzenButton Text="SUBMIT" class="btn custom-radzen-button" Click="() => SubmitAnswers(CurrentQuestion.Answers)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        }
+
+                        @if (CurrentQuestion.QuestionType.Equals(QuestionType.MultipleChoiceWithImageAnswer))
+                        {
+                            <RadzenRow JustifyContent="Radzen.JustifyContent.Center" AlignItems="Radzen.AlignItems.Center" class="radzen-row">
+                        @foreach (var answer in CurrentQuestion.Answers)
+                                {
+                                    <RadzenColumn Size="3">
+                                    <div class="checkbox-container">
+                                        <RadzenImage Path="@ImagePath(answer.AnswerImage)" alt="Color Image" Style="max-width:170px; max-height:auto;" />
+                                        <br/><br/>
+                                        <input type="checkbox" id="@answer.Id" @bind="answer.IsSelected" />
+                                    </div>
+                                    </RadzenColumn>
+
+                                }
+                            </RadzenRow>
+                            <br/><br/>
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="6" Offset="3" class="rz-p-1">
+                            <RadzenButton Text="SUBMIT" class="btn custom-radzen-button" Click="() => SubmitAnswers(CurrentQuestion.Answers)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        }
+
+                @if (CurrentQuestion.QuestionType.Equals(QuestionType.MultipleChoiceWithImageQuestionAndImageAnswer))
+                        {
+                    <RadzenImage Path="@ImagePath(CurrentQuestion.QuestionImage)"></RadzenImage>
+                            <br />
+                            <br />
+                            <RadzenRow JustifyContent="Radzen.JustifyContent.Center" AlignItems="Radzen.AlignItems.Center" class="radzen-row">
+                        @foreach (var answer in CurrentQuestion.Answers)
+                                {
+                                    <RadzenColumn Size="3">
+
+                                    <RadzenImage Path="@ImagePath(answer.AnswerImage)" alt="Color Image" class="image-container" />
+                                        <input type="checkbox" id="@answer.Id" @bind="answer.IsSelected" />
+                                    </RadzenColumn>
+
+                                }
+                            </RadzenRow>
+                            <RadzenRow class="rz-text-align-center" Gap="1rem">
+                                <RadzenColumn Size="6" Offset="3" class="rz-p-1">
+                            <RadzenButton Text="SUBMIT" class="btn custom-radzen-button" Click="() => SubmitAnswers(CurrentQuestion.Answers)" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        }
+
+            </div>
+
+                
+            }
+            else
+            {
+                <div class="app-title">
+                    @* @if (Score > (_lessonquiz.AttemptsAllowed)) *@
+                @if (!IsQuizFailure)
+                    {
+                        <img src="https://img.icons8.com/ios/100/000000/prize--v1.png" />
+                        
+                    }
+                    else
+                    {
+                        <img src="https://img.icons8.com/color/96/000000/lose.png" />
+                    }
+                </div>
+                <div class="app-title">
+                     @* @(Score > (_lessonquiz.AttemptsAllowed) ? "Congratulation" : "Better Luck Next Time")  *@
+                @if (IsQuizFailure)
+                {
+                    <p>Better Luck Next Time</p>
+                }
+                else
+                {
+                    <p>Congratulations</p>
+                }
+                    <br/><br/>
+                    <RadzenButton Text="FINISH" class="btn button-style" Click="() => Finish()" />
+                </div>
+
+            }
+        }
+        
+        
+        
+        
+        
+       
+    </div>
+
+@code {
+    private string ImagePath (string filename)
+    {
+        return "./images/" + filename;
+    }
+}

@@ -1,0 +1,112 @@
+﻿@page "/TF"
+@using CBT3_Application.Interfaces
+@using CBT3_Domain.Entities
+@using CBT3_Domain.Interfaces
+@using CBT3_UI.Components.Shared
+@using Radzen
+@inject NavigationManager _navManager
+@inject IMediator _mediator
+@inject IMessenger _eventaggregator;
+@inject DialogService _dialogService
+<style>
+
+    .button-container {
+        display: inline-block;
+        justify-content: center; /* Center items horizontally */
+    }
+
+    .sida-button-style {
+        width: 210px;  
+        height:304px;
+        font-size: 18px; /* Adjust font size for larger text */
+        background-color: transparent !important;
+        border: 1px solid transparent;
+        color: #ffffff !important;
+        margin: 0 10px; /* Add margin to create gap between buttons */
+    }
+
+    .button-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Adjust the gap between buttons as needed */
+        position: fixed;
+        justify-content: center;
+    }
+
+    .radzen-row {
+        height: 320px; /* Set a fixed height for the RadzenRow */
+        overflow: hidden;
+    }
+
+    .button-style {
+        width: 320px; /* Adjusted width for a larger button */
+        height: 120px; /* Adjusted height for a taller button */
+        font-size: 18px; /* Adjust font size for larger text */
+        background-color: #006AA9 !important;
+        color: #ffffff !important;
+    }
+
+    .radzen-dialog {
+        /* background-color: rgba(28, 62, 98, 0.5); */
+        background-color: white;
+        padding: 20px; /* Add padding as needed */
+    }
+
+    .rz-dialog-confirm-buttons > .rz-secondary {
+        width: 220px;
+        color: #ffffff !important;
+        height: 60px;
+        font-size: 18px;
+        background-color: red !important;
+    }
+
+    .rz-dialog-confirm-buttons > .rz-primary {
+        width: 220px;
+        color: #ffffff !important;
+        height: 60px;
+        font-size: 18px;
+        background-color: #006AA9 !important;
+    }
+   
+</style>
+
+
+    @foreach (var answer in _answers)
+    {
+    
+            <RadzenButton Text="@answer.AnswerText" class="btn button-style" Click="() => HandleAnswerSelectionClick(answer)" />
+            <br />
+            <br />
+
+    }
+
+
+@code {
+    [Parameter]
+    public List<Answer> Answers { get; set; }
+    private List<Answer> _answers;
+    private Answer _answer;
+
+    [Parameter]
+    public LessonQuizComponent Parent { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _answers = Answers;
+        await base.OnInitializedAsync();
+    }
+
+    private async void HandleAnswerSelectionClick(Answer answer)
+    {
+       // Parent.SubmitAnswer(answer);
+        // SubmitAnswer(answer);
+        //await ShowConfirmation(answer.AnswerText);
+
+        //_navManager.NavigateTo($"/lessonquizcomponent/{course.Id}");
+    }
+    
+
+    
+
+ }

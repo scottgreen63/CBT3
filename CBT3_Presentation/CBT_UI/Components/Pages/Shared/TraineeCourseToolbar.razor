@@ -1,0 +1,59 @@
+﻿@rendermode InteractiveServer
+@inject IJSRuntime _jsRuntime
+
+
+
+<script>
+    function closeWindow() {
+        window.close();
+    }
+</script>
+    <div>
+    @if (AppState.Trainee is not null)
+    {
+        <span style="font-size:18px;color:white">@AppState.Trainee.ToString()&nbsp;</span>
+    }
+    @if (AppState.Course is not null)
+    {
+        <span style="font-size:18px;color:white">@AppState.Course.CourseName&nbsp;</span>
+    }
+    @if (AppState.LessonPage is not null)
+    {
+        <span style="font-size:18px;color:white">@AppState.LessonPage.Id.Value&nbsp;</span>
+    }
+</div>
+       
+
+
+
+
+
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    private string message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //UpdateMessage(DateTime.Now.ToString(""));
+        
+        await base.OnInitializedAsync();
+    }
+    
+
+    void UpdateMessage(string message)
+    {
+        AppState.SetProperty(this, "Message", message + ": " + DateTime.Now.ToLongTimeString());
+    }
+
+    
+    
+    
+    private async Task CloseBrowser()
+    {
+        await _jsRuntime.InvokeVoidAsync("closeWindow");
+    }
+    
+          
+        
+}

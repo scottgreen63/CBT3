@@ -1,0 +1,48 @@
+﻿@rendermode InteractiveServer
+@inject IJSRuntime _jsRuntime
+
+
+
+<script>
+    function closeWindow() {
+        window.close();
+    }
+</script>
+    <div>
+       <span style="font-size:18px;color:white">@AppState.Session&nbsp;</span>
+    </div>
+       
+
+
+
+
+
+@code {
+    [CascadingParameter]
+    public CascadingAppState AppState { get; set; }
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        //UpdateMessage(DateTime.Now.ToString(""));
+        
+        await base.OnInitializedAsync();
+    }
+    
+
+    // void UpdateSession(string message)
+    // {
+    //     AppState.SetProperty(this, "Session", message + ": " + DateTime.Now.ToLongTimeString());
+    // }
+
+    
+    
+    
+    private async Task CloseBrowser()
+    {
+        await _jsRuntime.InvokeVoidAsync("closeWindow");
+    }
+    
+          
+        
+}
